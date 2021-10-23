@@ -23,6 +23,22 @@ class Lexico:
         else:
             return '~'
 
+    # funcao auxiliar para uso nos operadores + e -
+    def __deve_continuar(self):
+        if (self.char_lido >= '0' and self.char_lido <= '9'):
+            self.lex = self.char_lido
+            self.char_lido = self.__le_char()
+            self.estado = 2
+            return True
+
+        elif (self.char_lido >= 'a' and self.char_lido <= 'z' or self.char_lido > 'A' and self.char_lido <= 'Z' or self.char_lido >= '0' and self.char_lido <= '9' or self.char_lido == '_'):
+            self.lex = self.char_lido
+            self.char_lido = self.__le_char()
+            self.estado = 1
+            return True
+        
+        return False
+
     def __le_token(self) -> Token:
 
         while (True):
@@ -37,6 +53,8 @@ class Lexico:
                     if (self.char_lido == '='):
                         self.char_lido = self.__le_char()
                         return Token.TK_Mais_Ig
+                    elif (self.__deve_continuar()):
+                        continue
                     return Token.TK_Mais
 
                 if (self.char_lido == '-'):
@@ -44,6 +62,8 @@ class Lexico:
                     if (self.char_lido == '='):
                         self.char_lido = self.__le_char()
                         return Token.TK_Menos_Ig
+                    elif (self.__deve_continuar()):
+                        continue
                     return Token.TK_Menos
 
                 if (self.char_lido == '/'):
@@ -127,7 +147,6 @@ class Lexico:
                     self.lex = self.char_lido
                     self.char_lido = self.__le_char()
                     self.estado = 1
-                    print(self.estado)
                     continue
 
                 if (self.char_lido >= '0' and self.char_lido <= '9'):
