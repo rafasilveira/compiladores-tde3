@@ -11,7 +11,7 @@ class Main:
             self.lexico = Lexico(arq)
             self.lexico.le_token()
             try:
-                [com_p, com_c] = self.E()
+                [com_c, com_p] = self.E()
                 for part in com_p.split('   '):
                     print(part)
             except:
