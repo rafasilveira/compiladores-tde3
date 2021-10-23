@@ -11,4 +11,4 @@ def gera_label():
 def gera_temp():
     global temp_num
     temp_num += 1
-    return f"LB00{temp_num}"
+    return f"T00{temp_num}"

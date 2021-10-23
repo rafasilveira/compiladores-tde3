@@ -23,7 +23,7 @@ class Lexico:
         else:
             return '~'
 
-    def __le_token(self):
+    def __le_token(self) -> Token:
 
         while (True):
 
