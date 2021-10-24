@@ -3,5 +3,6 @@ T000 = 3T001 = a < T000	gofalse LB001
 	valor-l a
 T002 = 1T003 = a + T002	:=
 	pop
-	goto LB000
+ <-> 	goto LB000
 rotulo LB001
+ <-> 

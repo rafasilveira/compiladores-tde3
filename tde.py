@@ -12,14 +12,6 @@ class Main:
             self.lexico.le_token()
             resultado = ""
 
-            # while (self.lexico.token != Token.TK_Fim_Arquivo):
-                # try:
-                #     # [com_c, com_p] = self.E_expressao()
-                #     # # com_p = self.E()
-                #     # resultado += com_p
-                # except:
-                #     print(f"[Erro - Main] Algo deu errado.")
-                #     break
             com = self.lista_com('')
             if com is not None:
                 resultado += f"   {com}"
@@ -32,8 +24,6 @@ class Main:
                 for part in resultado.split('   '):
                     print(part)
                     arq_saida.write(part)
-
-    # Parte nova
 
     # int Lista_Com(char Lista_Com_c[MAX_COD], char lblbreak[])
     def lista_com(self, label_break: str):
@@ -65,8 +55,6 @@ class Main:
 
     # Com -> IF ( Rel ) Com ELSE com
     # int Com(char Com_c[MAX_COD], char lblbreak[]) { ... }
-    # def Com(self, com_c: str, label_break: str):
-
     def Com_break_if_while(self, com_c: str, label_break: str):
         print('Entrei no Com')
         Rel_c = ''
@@ -238,6 +226,7 @@ class Main:
             [R_sp, R_sc] = self.R_mais_menos(T_p, T_c)
             [L_sp, L_sc] = self.L_relacionais(R_sp, R_sc)
             [Q_sp, Q_sc] = self.Q_atr_maisig_menosig(L_sp, L_sc)
+            print('[DEBUG] Q_sc: ', Q_sc)
             return [Q_sp, Q_sc]
         except:
             print(f"[Erro - E] token: {self.lexico.token.name}")
