@@ -1,5 +1,10 @@
-	T000 = 1
-	T001 = 2
-	T002 = 3
-	T003 = T001 * T002
-	T004 = T000 + T003
+	valor-l a
+	push 0
+	:=
+	pop
+PŒ-æþ	valor-l a
+	valor-r a
+	push 1
+	+
+	:=
+	pop
