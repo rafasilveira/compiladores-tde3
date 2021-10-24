@@ -14,16 +14,15 @@ class Main:
 
             com = self.lista_com('')
             if com is not None:
-                resultado += f"   {com}"
+                resultado += f"\n{com}"
             else:
                 print('Programa encerrado com erro.')
 
             with open('saida-py.kvmp', 'w') as arq_saida:
 
                 print('Resultado:')
-                for part in resultado.split('   '):
-                    print(part)
-                    arq_saida.write(part)
+                print(resultado)
+                arq_saida.write(resultado)
 
     # int Lista_Com(char Lista_Com_c[MAX_COD], char lblbreak[])
     def lista_com(self, label_break: str):
@@ -210,7 +209,7 @@ class Main:
                 return [E_p, E_c]
             self.lexico.le_token()
             [A1_p, A1_c] = self.A()
-            A_c = f"{A1_c}   {E_p} = {A1_p}"
+            A_c = f"{A1_c}\n{E_p} = {A1_p}"
             A_p = E_p
             return [A_p, A_c]
 
@@ -238,7 +237,7 @@ class Main:
                 self.lexico.le_token()
                 [T_p, T_c] = self.A()
                 R1_hp = gera_temp()
-                R1_hc = f"{R_hc}{T_c}   {R_hp} = {T_p}"
+                R1_hc = f"{R_hc}{T_c}\n{R_hp} = {T_p}"
                 return self.R_mais_menos(R1_hp, R1_hc)
 
             if (self.lexico.token in [Token.TK_Mais_Ig, Token.TK_Menos_Ig]):
@@ -276,7 +275,7 @@ class Main:
             try:
                 [T_p, T_c] = self.T()
                 R1_hp = gera_temp()
-                R1_hc = f"{R_hc}{T_c}   {R1_hp} = {R_hp} {op} {T_p}"
+                R1_hc = f"{R_hc}{T_c}\n{R1_hp} = {R_hp} {op} {T_p}"
                 [R_sp, R_sc] = self.R_mais_menos(R1_hp, R1_hc)
                 return [R_sc, R_sp] if (self.lexico.flag_igual) else [R_sp, R_sc]
             except:
@@ -294,7 +293,7 @@ class Main:
             try:
                 [T_p, T_c] = self.T()
                 R1_hp = gera_temp()
-                R1_hc = f"{R_hc}{T_c}   {R1_hp} = {R_hp} {op} {T_p}"
+                R1_hc = f"{R_hc}{T_c}\n{R1_hp} = {R_hp} {op} {T_p}"
                 return self.R_mais_menos(R1_hp, R1_hc)
             except:
                 print(f"[Erro - R] unpack T. token: {self.lexico.token.name}")
@@ -324,7 +323,7 @@ class Main:
             try:
                 [F_p, F_c] = self.F_cte_id_parenteses()
                 S1_hp = gera_temp()
-                S1_hc = f"{S_hc}{F_c}   {S1_hp} = {S_hp} {op} {F_p}"
+                S1_hc = f"{S_hc}{F_c}\n{S1_hp} = {S_hp} {op} {F_p}"
                 return self.S_mult_div_resto(S1_hp, S1_hc)
 
             except:
@@ -338,7 +337,7 @@ class Main:
     def F_cte_id_parenteses(self):
         if (self.lexico.token == Token.TK_Const_Int):
             F_p = gera_temp()
-            F_c = f"   {F_p} = {self.lexico.lex}"
+            F_c = f"{F_p} = {self.lexico.lex}"
             self.lexico.le_token()
             return [F_p, F_c]
 
