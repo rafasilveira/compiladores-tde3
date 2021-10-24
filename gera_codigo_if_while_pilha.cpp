@@ -258,7 +258,7 @@ int T(char T_c[MAX_COD]);
 int E(char E_c[MAX_COD]);
 int R(char R_h[MAX_COD], char R_s[MAX_COD]);
 int F(char F_c[MAX_COD]);
-int S(char S_h[MAX_COD], char S_s[MAX_COD]);
+int S_mult(char S_h[MAX_COD], char S_s[MAX_COD]);
 
 int Rel(char Rel_c[MAX_COD]) {
   printf("Entrei no Rel\n");
@@ -298,7 +298,7 @@ int Rel(char Rel_c[MAX_COD]) {
 int E(char E_c[MAX_COD]) {
   printf("Entrei no E\n");
   char T_c[MAX_COD], R_h[MAX_COD], R_s[MAX_COD];
-  if (T(T_c)) {
+  if (T(T_c)) { // verificando aqui
     strcpy(R_h, T_c);
     if (R(R_h, R_s)) {
       strcpy(E_c, R_s);
@@ -346,9 +346,9 @@ int R(char R_h[MAX_COD], char R_s[MAX_COD]) {
 int T(char T_c[MAX_COD]) {
   char F_c[MAX_COD], S_h[MAX_COD], S_s[MAX_COD];
   printf("Entrei no T\n");
-  if (F(F_c)) {
+  if (F(F_c)) { // verificando aqui 2
     strcpy(S_h, F_c);
-    if (S(S_h, S_s)) {
+    if (S_mult(S_h, S_s)) {
       strcpy(T_c, S_s);
       return 1;
     }
@@ -356,7 +356,7 @@ int T(char T_c[MAX_COD]) {
   return 0;
 }
 
-int S(char S_h[MAX_COD], char S_s[MAX_COD]) {
+int S_mult(char S_h[MAX_COD], char S_s[MAX_COD]) {
   printf("Entrei no S (*FS)\n");
   char F_c[MAX_COD], S1_h[MAX_COD], S1_s[MAX_COD];
   if (token == TK_Mult) {
@@ -365,7 +365,7 @@ int S(char S_h[MAX_COD], char S_s[MAX_COD]) {
       strcpy(S1_h, S_h);
       strcat(S1_h, F_c);
       strcat(S1_h, "\t*\n");
-      if (S(S1_h, S1_s)) {
+      if (S_mult(S1_h, S1_s)) {
         strcpy(S_s, S1_s);
         return 1;
       }
@@ -379,7 +379,7 @@ int S(char S_h[MAX_COD], char S_s[MAX_COD]) {
 
 int F(char F_c[MAX_COD]) {
   printf("Entrei no F\n");
-
+  printf("Token: %s\n", tokens[token]);
   if (token == TK_Const_Int) {
     strcpy(F_c, "\tpush ");
     strcat(F_c, lex);
@@ -423,6 +423,7 @@ int Lista_Com(char Lista_Com_c[MAX_COD], char lblbreak[]);
 
 int Lista_Com(char Lista_Com_c[MAX_COD], char lblbreak[]) {
   printf("Entrei no Lista_Com\n");
+  token = le_token();
 
   char LL_c[MAX_COD];
   char Com_c[MAX_COD];
@@ -433,7 +434,6 @@ int Lista_Com(char Lista_Com_c[MAX_COD], char lblbreak[]) {
     return 1;
   }
 
-  // to aqui 1
   if (Com(Com_c, lblbreak)) {
     printf("B - token � %s\n", tokens[token]);
     if (Lista_Com(LL_c, lblbreak)) {

@@ -1,8 +1,4 @@
 	valor-l a
-	push 0
-	:=
-	pop
-PŒ-æþ	valor-l a
 	valor-r a
 	push 1
 	+
