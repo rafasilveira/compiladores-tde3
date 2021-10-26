@@ -606,7 +606,7 @@ int main() {
     printf("Erro na abertura do arquivo");
     exit(0);
   }
-  if ((arqout = fopen("saida.kvmp", "wt")) == NULL) {
+  if ((arqout = fopen("saida-if-while-c.kvmp", "wt")) == NULL) {
     printf("Erro na abertura do arquivo de saida");
     exit(0);
   }

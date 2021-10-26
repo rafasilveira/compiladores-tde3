@@ -18,7 +18,7 @@ class Main:
             else:
                 print('Programa encerrado com erro.')
 
-            with open('saida-py.kvmp', 'w') as arq_saida:
+            with open('saida.kvmp', 'w') as arq_saida:
 
                 print('Resultado:')
                 print(resultado)
