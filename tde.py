@@ -157,7 +157,6 @@ class Main:
                                     com_i = f"{E1_c}\n{id} = {E1_p}"
 
                                     [E2_p, E2_c] = self.Rel()
-                                    print(f'--- cheguei no e2: {E2_c}')
                                     com_condicao = E2_c
                                     if (self.lexico.token == Token.TK_pv):
                                         self.lexico.le_token()
@@ -173,11 +172,8 @@ class Main:
                                                     self.lexico.le_token()
                                                     com1_c = self.Com_break_if_while('',
                                                         label_break=label_fim, label_continue=label_inicio)
-                                                    # resultado = "rotulo " + label_inicio + "\n" + com_i + "\n" + com_condicao + "  " + "gofalse " + label_fim + \
-                                                    #     "\n" + com1_c + "\n" + com_incremento + "\n" + "goto " + \
-                                                    #     label_inicio + "\n" + "rotulo " + label_fim + "\n"
-                                                    # return resultado
-                                                    return f"rotulo {label_inicio}{com_i}{com_condicao}\n\tgofalse {label_fim}{com1_c}{com_incremento}\n\tgoto {label_inicio}\nrotulo {label_fim}"
+                                                   
+                                                    return f"{com_i}\nrotulo {label_inicio}{com_condicao}\n\tgofalse {label_fim}{com1_c}{com_incremento}\n\tgoto {label_inicio}\nrotulo {label_fim}"
                                                 else:
                                                     print(
                                                         f"[Erro: Com for - esperava fecha parenteses. Token: {self.lexico.token}]")
