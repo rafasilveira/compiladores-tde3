@@ -6,4 +6,5 @@ T001 = 5
 T002 = T000 > T001
 	gofalse LB001
 	goto LB000
+	goto LB000
 rotulo LB001
