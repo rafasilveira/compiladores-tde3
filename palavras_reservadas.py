@@ -7,7 +7,10 @@ reservadas = {
     "struct": Token.TK_struct,
     "if": Token.TK_if,
     "else": Token.TK_else,
-    "while": Token.TK_while
+    "while": Token.TK_while,
+    "for": Token.TK_for,
+    "break": Token.TK_break,
+    "continue": Token.TK_continue,
 }
 
 

@@ -18,6 +18,16 @@ class Lexico:
 
     def __le_char(self):
         lido = self.arquivo.read(1)
+        while True:
+            if (lido == '/'):
+                lido = self.arquivo.read(1)
+                if lido == '/':
+                    comentario = self.arquivo.readline()
+                    print(f"-- Li um comentário: {comentario}")
+                    lido = self.arquivo.read(1)
+            else:
+                break
+
         if (lido != ''):
             return lido
         else:

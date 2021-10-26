@@ -29,6 +29,9 @@ Token = Enum("TOKEN",
     TK_Igual \
     TK_Diferente \
     TK_while \
+    TK_for \
+    TK_break \
+    TK_continue \
     TK_and_bitwise \
     TK_and_logico \
     TK_Div \
