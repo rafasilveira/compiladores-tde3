@@ -10,8 +10,6 @@ class Main:
         with open('arquivo.c') as arq:
             self.lexico = Lexico(arq)
             self.lexico.le_token()
-            self.label_global_inicio = ''
-            self.label_global_fim = ''
             resultado = ""
 
             com = self.lista_com(label_break='', label_continue='')
@@ -54,8 +52,52 @@ class Main:
         print('Vou retornar None no Lista_Com-2')
         return None
 
+    def com_for_inicializacao(self, anterior: str = ''):
+        print(f'[For] avaliando inicializacao. token: {self.lexico.token}, resultado: {anterior}')
+        if (self.lexico.token == Token.TK_id):
+            id = self.lexico.lex
+            self.lexico.le_token()
+            if (self.lexico.token == Token.TK_Atrib):
+                self.lexico.le_token()
+                try:
+                    [E1_p, E1_c] = self.Rel()
+                    # self.lexico.le_token()
+                    resultado = f"{anterior}{E1_c}\n{id} = {E1_p}"
+                    if (self.lexico.token == Token.TK_virgula):
+                        self.lexico.le_token()
+                        return self.com_for_inicializacao(resultado)
+                    return resultado
+                except:
+                    print("[Erro: com for] unpack rel (inicializacao)")
+
+    def com_for_condicao(self):
+        print(f'[For] avaliando condicao. token: {self.lexico.token}')
+        if (self.lexico.token == Token.TK_pv):
+            self.lexico.le_token()
+            try:
+                [E2_p, E2_c] = self.Rel()
+                return E2_c
+            except:
+                print("[Erro: com for] unpack rel (condicao)")
+
+    def com_for_incremento(self):
+        print(f'[For] avaliando incremento. token: {self.lexico.token}')
+        if (self.lexico.token == Token.TK_pv):
+            self.lexico.le_token()
+            if (self.lexico.token == Token.TK_id):
+                id = self.lexico.lex
+                self.lexico.le_token()
+                if (self.lexico.token == Token.TK_Atrib):
+                    self.lexico.le_token()
+                    try:
+                        [E3_p, E3_c] = self.Rel()
+                        return E3_c
+                    except:
+                        print("[Erro: com for] unpack rel (incremento)")
+
     # Com -> IF ( Rel ) Com ELSE com
     # int Com(char Com_c[MAX_COD], char lblbreak[]) { ... }
+
     def Com_break_if_while(self, com_c: str, label_break: str, label_continue: str):
         print('Entrei no Com')
         if (self.lexico.token in [Token.TK_break, Token.TK_continue]):
@@ -137,62 +179,28 @@ class Main:
         elif (self.lexico.token == Token.TK_for):
             label_inicio = gera_label()
             label_fim = gera_label()
-            self.label_global_inicio = label_inicio
-            self.label_global_fim = label_fim
             self.lexico.le_token()
 
             if (self.lexico.token == Token.TK_Abre_Par):
                 self.lexico.le_token()
                 if (self.lexico.token != Token.TK_pv):
-                    if (self.lexico.token == Token.TK_id):
-                        id = self.lexico.lex
-                        self.lexico.le_token()
-                        if (self.lexico.token == Token.TK_Atrib):
+                    try:
+                        com_inicializacao = self.com_for_inicializacao()
+                        com_condicao = self.com_for_condicao()
+                        com_incremento = self.com_for_incremento()
+
+                        if (self.lexico.token == Token.TK_Fecha_Par):
                             self.lexico.le_token()
-                            try:
-                                [E1_p, E1_c] = self.Rel()
-                                if (self.lexico.token == Token.TK_pv):
-                                    self.lexico.le_token()
-                                    # com_i = f"\tvalor-l {id}\n{E1_c}  :=\n  pop\n"
-                                    com_i = f"{E1_c}\n{id} = {E1_p}"
+                            com1_c = self.Com_break_if_while('',
+                                                             label_break=label_fim, label_continue=label_inicio)
 
-                                    [E2_p, E2_c] = self.Rel()
-                                    com_condicao = E2_c
-                                    if (self.lexico.token == Token.TK_pv):
-                                        self.lexico.le_token()
-                                        if (self.lexico.token == Token.TK_id):
-                                            id = self.lexico.lex
-                                            self.lexico.le_token()
-                                            if (self.lexico.token == Token.TK_Atrib):
-                                                self.lexico.le_token()
-                                                [E3_p, E3_c] = self.Rel()
-                                                print(f'--- cheguei no e3: {E3_c}')
-                                                com_incremento = E3_c
-                                                if (self.lexico.token == Token.TK_Fecha_Par):
-                                                    self.lexico.le_token()
-                                                    com1_c = self.Com_break_if_while('',
-                                                        label_break=label_fim, label_continue=label_inicio)
-                                                   
-                                                    return f"{com_i}\nrotulo {label_inicio}{com_condicao}\n\tgofalse {label_fim}{com1_c}{com_incremento}\n\tgoto {label_inicio}\nrotulo {label_fim}"
-                                                else:
-                                                    print(
-                                                        f"[Erro: Com for - esperava fecha parenteses. Token: {self.lexico.token}]")
-
-                                else:
-                                    print(
-                                        f"[Erro: Com for - esperava ponto e virgula. Token: {self.lexico.token}]")
-
-                            except:
-                                print("[Erro: Com for - unpack]")
+                            return f"{com_inicializacao}\nrotulo {label_inicio}{com_condicao}\n\tgofalse {label_fim}{com1_c}{com_incremento}\n\tgoto {label_inicio}\nrotulo {label_fim}"
                         else:
                             print(
-                                f"[Erro: Com for - esperava atribuicao. Token: {self.lexico.token}]")
-                    else:
-                        print(
-                            f"[Erro: Com for - esperava identificador. Token: {self.lexico.token}]")
-                else:
-                    print(
-                        f"[Erro: Com for - nao implementado for sem primeira parte. Token: {self.lexico.token}]")
+                                f"[Erro: Com for - esperava fecha parenteses. Token: {self.lexico.token}]")
+
+                    except:
+                        print("[Erro: Com for - unpack]")
 
         elif self.lexico.token == Token.TK_id:
             id = self.lexico.lex
@@ -204,8 +212,6 @@ class Main:
                     [rel_p, rel_c] = resultado_rel
                     if self.lexico.token == Token.TK_pv:
                         self.lexico.le_token()
-                        # return f"\tvalor-l {id}\n{E_c}\t:=\n\tpop\n"
-                        # return f"\tvalor-l {id}\n{rel_c}\t:=\n\tpop\n"
                         return f"{rel_c}\n{id} = {rel_p}"
 
                     else:
@@ -242,7 +248,6 @@ class Main:
         print('Entrei no Rel')
         try:
             [E1_p, E1_c] = self.E_expressao()
-        # if (E1_c is not None):
             op = ''
             if (self.lexico.token == Token.TK_Maior):
                 op = ">"
@@ -271,7 +276,6 @@ class Main:
         except:
             return None
 
-    # Fim parte nova
 
     # avalia atribuicao
     def A(self):

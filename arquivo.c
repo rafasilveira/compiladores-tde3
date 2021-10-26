@@ -1,4 +1,4 @@
-for (i = 0; i < 2; i = i + 1) {
+for (i = 0, j = 0; i < 2; i = i + 1) {
 // while (i < 10) {
   a = 1;
   if (a > 0) continue;
