@@ -72,29 +72,28 @@ class Main:
             label_fim = gera_label()
             self.lexico.le_token()
 
-            # if (Rel(Rel_c)) { ... }
-            rel_c = self.Rel()
-            if (rel_c is not None):
-                if self.lexico.token == Token.TK_Fecha_Par:
-                    self.lexico.le_token()
-                    com3_c = self.Com_break_if_while(
-                        '', label_break, label_continue)
-                    if (com3_c is not None):
-                        if self.lexico.token == Token.TK_else:
-                            self.lexico.le_token()
-                            com2_c = self.Com_break_if_while(
-                                '', label_break, label_continue)
-                            if com2_c is not None:
-
-                                # sprintf(Com_c, "%s\tgofalse %s\n%s\tgoto %s\nrotulo %s\n%srotulo %s\n",
-                                #         Rel_c, labelelse, Com3_c, labelfim, labelelse, Com2_c, labelfim);
-                                return f"{rel_c}\n\tgofalse {label_else}\n{com3_c}\tgoto {label_fim}\nrotulo {label_else}\n{com2_c}rotulo {label_fim}\n"
+            # parte nova nova
+            if self.lexico.token is Token.TK_Abre_Par:
+                self.lexico.le_token()
+                # if (Rel(Rel_c)) { ... }
+                rel_c = self.Rel()
+                if (rel_c is not None):
+                    if self.lexico.token == Token.TK_Fecha_Par:
+                        self.lexico.le_token()
+                        com3_c = self.Com_break_if_while(
+                            '', label_break, label_continue)
+                        if (com3_c is not None):
+                            if self.lexico.token == Token.TK_else:
+                                self.lexico.le_token()
+                                com2_c = self.Com_break_if_while(
+                                    '', label_break, label_continue)
+                                if com2_c is not None:
+                                    return f"{rel_c}\n\tgofalse {label_else}\n{com3_c}\tgoto {label_fim}\nrotulo {label_else}\n{com2_c}rotulo {label_fim}\n"
+                                else:
+                                    print(
+                                        "[Erro: Com if] Erro no comando do Else")
                             else:
-                                print("[Erro: Com if] Erro no comando do Else")
-                        else:
-                            # sprintf(Com_c, "%s\tgofalse %s\n%srotulo %s\n",
-                            #     Rel_c, labelelse, Com3_c, labelelse);
-                            return f"{rel_c}\n\tgofalse {label_else}\n{com3_c}rotulo {label_else}\n"
+                                return f"{rel_c}\n\tgofalse {label_else}\n{com3_c}rotulo {label_else}\n"
                     else:
                         print(
                             f"[Erro: Com if] Esperava fecha parênteses. Token: {self.lexico.token.name}")
@@ -157,8 +156,11 @@ class Main:
                     print('Consumi o fecha chaves')
                     return lista_com_c
                 else:
-                    print("[Erro: Com abre chave] esperava fecha chave")
+                    print(
+                        f"[Erro: Com abre chave] esperava fecha chave. Token: {self.lexico.token.name}")
                     return None
+            else:
+                print('[Erro: Com abre chave] erro no comando')
         elif self.lexico.token == Token.TK_pv:
             print('Vou retornar no Com com ponto e virgula')
             self.lexico.le_token()
@@ -189,8 +191,9 @@ class Main:
             print(f'Voltei do E, token: {self.lexico.token.name} op: {op}')
             if (self.lexico.token in [Token.TK_Maior, Token.TK_Menor, Token.TK_Igual, Token.TK_Diferente, Token.TK_Maior_Igual, Token.TK_Menor_Igual]):
                 self.lexico.le_token()
-                E2_c = self.E_expressao()
-                if (E2_c is not None):
+                resultado_E2 = self.E_expressao()
+                if (resultado_E2 is not None):
+                    [E2_p, E2_c] = resultado_E2
                     print(
                         f'Voltei do E2, token: {self.lexico.token.name} op: {op}')
                     return f"{E1_c}{E2_c}\t{op}\n"
