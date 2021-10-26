@@ -30,7 +30,7 @@ class Main:
         print(f'Vou testar Com - token: {self.lexico.token.name}')
         if (self.lexico.token == Token.TK_Fim_Arquivo):
             return ''
-        if (self.lexico.token not in [Token.TK_id, Token.TK_pv, Token.TK_if, Token.TK_while]):
+        if (self.lexico.token not in [Token.TK_id, Token.TK_pv, Token.TK_if, Token.TK_while, Token.TK_break, Token.TK_continue, Token.TK_for]):
             return ""
 
         # if (Com(Com_c, lblbreak)) { ... }
@@ -58,6 +58,7 @@ class Main:
         print('Entrei no Com')
         Rel_c = ''
         if (self.lexico.token == Token.TK_break):
+            print('-- tk break')
             self.lexico.le_token()
             if (self.lexico.token == Token.TK_pv):
                 self.lexico.le_token()
@@ -84,13 +85,13 @@ class Main:
 
                                 # sprintf(Com_c, "%s\tgofalse %s\n%s\tgoto %s\nrotulo %s\n%srotulo %s\n",
                                 #         Rel_c, labelelse, Com3_c, labelfim, labelelse, Com2_c, labelfim);
-                                return f"{Rel_c}\tgofalse {label_else}\n{com3_c}\tgoto {label_fim}\nrotulo {label_else}\n{com2_c}rotulo {label_fim}\n"
+                                return f"{Rel_c}\n\tgofalse {label_else}\n{com3_c}\tgoto {label_fim}\nrotulo {label_else}\n{com2_c}rotulo {label_fim}\n"
                             else:
                                 print("[Erro: Com if] Erro no comando do Else")
                         else:
                             # sprintf(Com_c, "%s\tgofalse %s\n%srotulo %s\n",
                             #     Rel_c, labelelse, Com3_c, labelelse);
-                            return f"{rel_c}\tgofalse {label_else}\n{com3_c}rotulo {label_else}\n"
+                            return f"{rel_c}\n\tgofalse {label_else}\n{com3_c}rotulo {label_else}\n"
                     else:
                         print(
                             f"[Erro: Com if] Esperava fecha parênteses. Token: {self.lexico.token.name}")
@@ -114,7 +115,7 @@ class Main:
                         if (com1_c is not None):
                             # sprintf(Com_c, "rotulo %s\n%s\tgofalse %s\n%s\tgoto %s\nrotulo %s\n",
                             #         labelinicio, Rel_c, labelfim, Com1_c, labelinicio, labelfim);
-                            return f"rotulo {label_inicio}\n{rel_c}\tgofalse {label_fim}\n{com1_c}\tgoto {label_inicio}\nrotulo {label_fim}\n"
+                            return f"rotulo {label_inicio}\n{rel_c}\n\tgofalse {label_fim}\n{com1_c}\tgoto {label_inicio}\nrotulo {label_fim}\n"
                         else:
                             print('[Erro - Com while] esperava fecha parênteses')
                     else:
@@ -167,10 +168,6 @@ class Main:
         print('Entrei no Rel')
         try:
             [E1_p, E1_c] = self.E_expressao()
-            print('[DEBUG - Rel]')
-            print(f'E1_p: {E1_p}')
-            print(f'E1_c: {E1_c}')
-            print('---')
         # if (E1_c is not None):
             op = ''
             if (self.lexico.token == Token.TK_Maior):
@@ -225,7 +222,6 @@ class Main:
             [R_sp, R_sc] = self.R_mais_menos(T_p, T_c)
             [L_sp, L_sc] = self.L_relacionais(R_sp, R_sc)
             [Q_sp, Q_sc] = self.Q_atr_maisig_menosig(L_sp, L_sc)
-            print('[DEBUG] Q_sc: ', Q_sc)
             return [Q_sp, Q_sc]
         except:
             print(f"[Erro - E] token: {self.lexico.token.name}")
@@ -337,7 +333,7 @@ class Main:
     def F_cte_id_parenteses(self):
         if (self.lexico.token == Token.TK_Const_Int):
             F_p = gera_temp()
-            F_c = f"{F_p} = {self.lexico.lex}"
+            F_c = f"\n{F_p} = {self.lexico.lex}"
             self.lexico.le_token()
             return [F_p, F_c]
 
