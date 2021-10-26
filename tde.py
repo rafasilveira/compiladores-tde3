@@ -10,6 +10,8 @@ class Main:
         with open('arquivo.c') as arq:
             self.lexico = Lexico(arq)
             self.lexico.le_token()
+            self.label_global_inicio = ''
+            self.label_global_fim = ''
             resultado = ""
 
             com = self.lista_com(label_break='', label_continue='')
@@ -131,6 +133,70 @@ class Main:
                 print(
                     f"[Erro: Com while] Esperava abre parênteses. Token: {self.lexico.token.name}")
             return None
+
+        elif (self.lexico.token == Token.TK_for):
+            label_inicio = gera_label()
+            label_fim = gera_label()
+            self.label_global_inicio = label_inicio
+            self.label_global_fim = label_fim
+            self.lexico.le_token()
+
+            if (self.lexico.token == Token.TK_Abre_Par):
+                self.lexico.le_token()
+                if (self.lexico.token != Token.TK_pv):
+                    if (self.lexico.token == Token.TK_id):
+                        id = self.lexico.lex
+                        self.lexico.le_token()
+                        if (self.lexico.token == Token.TK_Atrib):
+                            self.lexico.le_token()
+                            try:
+                                [E1_p, E1_c] = self.Rel()
+                                if (self.lexico.token == Token.TK_pv):
+                                    self.lexico.le_token()
+                                    com_i = f"\tvalor-l {id}\n{E1_c}  :=\n  pop\n"
+                                    # to aqui
+
+                                    [E2_p, E2_c] = self.Rel()
+                                    print(f'--- cheguei no e2: {E2_c}')
+                                    com_condicao = E2_c
+                                    if (self.lexico.token == Token.TK_pv):
+                                        self.lexico.le_token()
+                                        if (self.lexico.token == Token.TK_id):
+                                            id = self.lexico.lex
+                                            self.lexico.le_token()
+                                            if (self.lexico.token == Token.TK_Atrib):
+                                                self.lexico.le_token()
+                                                [E3_p, E3_c] = self.Rel()
+                                                print(f'--- cheguei no e3: {E3_c}')
+                                                com_incremento = E3_c
+                                                if (self.lexico.token == Token.TK_Fecha_Par):
+                                                    self.lexico.le_token()
+                                                    com1_c = self.Com_break_if_while('',
+                                                        label_break=label_fim, label_continue=label_inicio)
+                                                    resultado = "rotulo " + label_inicio + "\n" + com_i + "\n" + com_condicao + "  " + "gofalse " + label_fim + \
+                                                        "\n" + com1_c + "\n" + com_incremento + "\n" + "goto " + \
+                                                        label_inicio + "\n" + "rotulo " + label_fim + "\n"
+                                                    return resultado
+                                                else:
+                                                    print(
+                                                        f"[Erro: Com for - esperava fecha parenteses. Token: {self.lexico.token}]")
+
+                                else:
+                                    print(
+                                        f"[Erro: Com for - esperava ponto e virgula. Token: {self.lexico.token}]")
+
+                            except:
+                                print("[Erro: Com for - unpack]")
+                        else:
+                            print(
+                                f"[Erro: Com for - esperava atribuicao. Token: {self.lexico.token}]")
+                    else:
+                        print(
+                            f"[Erro: Com for - esperava identificador. Token: {self.lexico.token}]")
+                else:
+                    print(
+                        f"[Erro: Com for - nao implementado for sem primeira parte. Token: {self.lexico.token}]")
+
         elif self.lexico.token == Token.TK_id:
             id = self.lexico.lex
             self.lexico.le_token()
@@ -144,7 +210,6 @@ class Main:
                         # return f"\tvalor-l {id}\n{E_c}\t:=\n\tpop\n"
                         # return f"\tvalor-l {id}\n{rel_c}\t:=\n\tpop\n"
                         return f"{rel_c}\n{id} = {rel_p}"
-                        
 
                     else:
                         print(
