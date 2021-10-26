@@ -76,8 +76,9 @@ class Main:
             if self.lexico.token is Token.TK_Abre_Par:
                 self.lexico.le_token()
                 # if (Rel(Rel_c)) { ... }
-                rel_c = self.Rel()
-                if (rel_c is not None):
+                resultado_rel = self.Rel()
+                if (resultado_rel is not None):
+                    [rel_p, rel_c] = resultado_rel
                     if self.lexico.token == Token.TK_Fecha_Par:
                         self.lexico.le_token()
                         com3_c = self.Com_break_if_while(
@@ -109,16 +110,17 @@ class Main:
             self.lexico.le_token()
             if (self.lexico.token == Token.TK_Abre_Par):
                 self.lexico.le_token()
-                rel_c = self.Rel()
-                if (rel_c is not None):
+                resultado_rel = self.Rel()
+                if (resultado_rel is not None):
+                    [rel_p, rel_c] = resultado_rel
                     if (self.lexico.token == Token.TK_Fecha_Par):
                         self.lexico.le_token()
                         com1_c = self.Com_break_if_while(
                             '', label_fim, label_inicio)
                         if (com1_c is not None):
-                            # sprintf(Com_c, "rotulo %s\n%s\tgofalse %s\n%s\tgoto %s\nrotulo %s\n",
-                            #         labelinicio, Rel_c, labelfim, Com1_c, labelinicio, labelfim);
-                            return f"rotulo {label_inicio}\n{rel_c}\n\tgofalse {label_fim}\n{com1_c}\tgoto {label_inicio}\nrotulo {label_fim}\n"
+                            return f"rotulo {label_inicio}\
+                                {rel_c}\n\tgofalse {label_fim}\
+                                {com1_c}\n\tgoto {label_inicio}\nrotulo {label_fim}"
                         else:
                             print('[Erro - Com while] esperava fecha parênteses')
                     else:
@@ -134,11 +136,15 @@ class Main:
             self.lexico.le_token()
             if self.lexico.token == Token.TK_Atrib:
                 self.lexico.le_token()
-                E_c = self.Rel()
-                if E_c is not None:
+                resultado_rel = self.Rel()
+                if (resultado_rel is not None):
+                    [rel_p, rel_c] = resultado_rel
                     if self.lexico.token == Token.TK_pv:
                         self.lexico.le_token()
-                        return f"\tvalor-l {id}\n{E_c}\t:=\n\tpop\n"
+                        # return f"\tvalor-l {id}\n{E_c}\t:=\n\tpop\n"
+                        # return f"\tvalor-l {id}\n{rel_c}\t:=\n\tpop\n"
+                        return f"{rel_c}\n{id} = {rel_p}"
+                        
 
                     else:
                         print(
@@ -196,10 +202,10 @@ class Main:
                     [E2_p, E2_c] = resultado_E2
                     print(
                         f'Voltei do E2, token: {self.lexico.token.name} op: {op}')
-                    return f"{E1_c}{E2_c}\t{op}\n"
+                    return [E2_p, f"{E1_c}{E2_c}\t{op}\n"]
                 return None
             else:
-                return E1_c
+                return [E1_p, E1_c]
         except:
             return None
 
@@ -225,7 +231,7 @@ class Main:
     def E_expressao(self):
         try:
 
-            [T_p, T_c] = self.T()  # verificando aqui
+            [T_p, T_c] = self.T()
             [R_sp, R_sc] = self.R_mais_menos(T_p, T_c)
             [L_sp, L_sc] = self.L_relacionais(R_sp, R_sc)
             [Q_sp, Q_sc] = self.Q_atr_maisig_menosig(L_sp, L_sc)
@@ -305,7 +311,7 @@ class Main:
 
     def T(self):
         try:
-            [F_p, F_c] = self.F_cte_id_parenteses()  # verificando aqui 2
+            [F_p, F_c] = self.F_cte_id_parenteses()
             return self.S_mult_div_resto(F_p, F_c)
         except:
             print(f"[Erro - T] unpack F. token: {self.lexico.token.name}")

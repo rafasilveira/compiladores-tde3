@@ -4,29 +4,23 @@ rotulo LB000
 T000 = 10
 T001 = i < T000
 	gofalse LB001
-	valor-l a
 
-T002 = 1	:=
-	pop
-
+T002 = 1
+a = T002
 T003 = 0
 T004 = a > T003
 	gofalse LB002
 	goto LB000
 rotulo LB002
-	valor-l b
 
-T005 = 1	:=
-	pop
-
+T005 = 1
+b = T005
 T006 = 1
 T007 = b > T006
 	gofalse LB004
 	goto LB001
 rotulo LB004
-	valor-l c
 
-T008 = 1	:=
-	pop
-	goto LB000
+T008 = 1
+c = T008	goto LB000
 rotulo LB001
