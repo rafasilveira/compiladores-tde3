@@ -74,16 +74,20 @@ class Main:
                     except:
                         print("[Erro: com for] unpack rel (inicializacao)")
 
-    def com_for_condicao(self):
+    def com_for_condicao(self, anterior: str = ''):
         print(f'[For] avaliando condicao. token: {self.lexico.token}')
         if (self.lexico.token == Token.TK_pv):
             self.lexico.le_token()
-            return ''
+            return anterior
         else:
             try:
                 [E2_p, E2_c] = self.Rel()
+                resultado = f"{anterior}{E2_c}"
+                if (self.lexico.token == Token.TK_virgula):
+                    self.lexico.le_token()
+                    return self.com_for_condicao(resultado)
                 self.lexico.le_token()
-                return E2_c
+                return resultado
             except:
                 print("[Erro: com for] unpack rel (condicao)")
 

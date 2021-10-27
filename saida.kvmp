@@ -7,38 +7,40 @@ rotulo LB000
 
 T002 = 10
 T003 = i < T002
+T004 = 10
+T005 = j < T004
 	gofalse LB001
-  T008 = 1
-  a = T008
-  T009 = 0
-  T0010 = a > T009
+  T0010 = 1
+  a = T0010
+  T0011 = 0
+  T0012 = a > T0011
   	gofalse LB002
   	goto LB000
   rotulo LB002
   
-  T0011 = 1
-  b = T0011
+  T0013 = 1
+  b = T0013
   rotulo LB004                                
-  T0012 = 10
-  T0013 = a < T0012
+  T0014 = 10
+  T0015 = a < T0014
   	gofalse LB005                                
-  T0014 = 1
-  T0015 = a + T0014
-  a = T0015
+  T0016 = 1
+  T0017 = a + T0016
+  a = T0017
   	goto LB004
   rotulo LB005
-  T0016 = 1
-  T0017 = b > T0016
+  T0018 = 1
+  T0019 = b > T0018
   	gofalse LB006
   	goto LB001
   rotulo LB006
   
-  T0018 = 1
-  c = T0018
+  T0020 = 1
+  c = T0020
 
-T004 = 1
-T005 = i + T004
 T006 = 1
-T007 = j - T006
+T007 = i + T006
+T008 = 1
+T009 = j - T008
 	goto LB000
 rotulo LB001

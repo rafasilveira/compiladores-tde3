@@ -1,4 +1,4 @@
-for (i = 0, j = 0; i < 10; i = i + 1, j = j - 1) {
+for (i = 0, j = 0; i < 10, j < 10; i = i + 1, j = j - 1) {
   a = 1;
   if (a > 0) continue;
   b = 1;
