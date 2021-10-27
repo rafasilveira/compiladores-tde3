@@ -10,19 +10,19 @@ class Main:
         with open('arquivo.c') as arq:
             self.lexico = Lexico(arq)
             self.lexico.le_token()
-            resultado = ""
+            resultado = []
 
-            com = self.lista_com(label_break='', label_continue='')
-            if com is not None:
-                resultado += f"\n{com}"
+            comandos = self.lista_com(label_break='', label_continue='')
+            if comandos is not None:
+                with open('saida.kvmp', 'w') as arq_saida:
+                    print('Resultado:')
+                    for comando in comandos.split('\n'):
+                        resultado.append(comando)
+                        print(comando)
+                        arq_saida.write(f'{comando}\n')
+
             else:
                 print('Programa encerrado com erro.')
-
-            with open('saida.kvmp', 'w') as arq_saida:
-
-                print('Resultado:')
-                print(resultado)
-                arq_saida.write(resultado)
 
     # int Lista_Com(char Lista_Com_c[MAX_COD], char lblbreak[])
     def lista_com(self, label_break: str, label_continue: str):
@@ -52,8 +52,75 @@ class Main:
         print('Vou retornar None no Lista_Com-2')
         return None
 
+    def com_for_inicializacao(self, anterior: str = ''):
+        print(f'[For] avaliando inicializacao. token: {self.lexico.token}, resultado: {anterior}')
+        if (self.lexico.token == Token.TK_pv):
+            self.lexico.le_token()
+            return anterior
+        else:
+            if (self.lexico.token == Token.TK_id):
+                id = self.lexico.lex
+                self.lexico.le_token()
+                if (self.lexico.token == Token.TK_Atrib):
+                    self.lexico.le_token()
+                    try:
+                        [E1_p, E1_c] = self.Rel()
+                        resultado = f"{anterior}{E1_c}\n{id} = {E1_p}"
+                        if (self.lexico.token == Token.TK_virgula):
+                            self.lexico.le_token()
+                            return self.com_for_inicializacao(resultado)
+                        self.lexico.le_token()
+                        return resultado
+                    except:
+                        print("[Erro: com for] unpack rel (inicializacao)")
+
+    def com_for_condicao(self):
+        print(f'[For] avaliando condicao. token: {self.lexico.token}')
+        if (self.lexico.token == Token.TK_pv):
+            self.lexico.le_token()
+            return ''
+        else:
+            try:
+                [E2_p, E2_c] = self.Rel()
+                self.lexico.le_token()
+                return E2_c
+            except:
+                print("[Erro: com for] unpack rel (condicao)")
+
+    def com_for_incremento(self, anterior: str = ''):
+        print(f'[For] avaliando incremento. token: {self.lexico.token}')
+        if (self.lexico.token == Token.TK_Fecha_Par):
+            self.lexico.le_token()
+            print(f'[com_for_incremento] saindo no fecha par com token: {self.lexico.token}')
+            return anterior
+        else:
+            # self.lexico.le_token()
+            if (self.lexico.token == Token.TK_pv):
+                self.lexico.le_token()
+                return self.com_for_incremento(anterior)
+            if (self.lexico.token == Token.TK_id):
+                self.lexico.le_token()
+                if (self.lexico.token == Token.TK_Atrib):
+                    self.lexico.le_token()
+                    try:
+                        [E3_p, E3_c] = self.Rel()
+                        resultado = f"{anterior}{E3_c}"
+                        if self.lexico.token == Token.TK_virgula:
+                            self.lexico.le_token()
+                            print(f'[com_for_incremento] saindo na virgula com token: {self.lexico.token}')
+                            return self.com_for_incremento(resultado)
+                        self.lexico.le_token()
+                        print(f'[com_for_incremento] saindo no else com token: {self.lexico.token}')
+                        return resultado
+                    except:
+                        print("[Erro: com for] unpack rel (incremento)")
+            else:
+                print(f'[com_for_incremento] saindo no else final com string vazia e token: {self.lexico.token}')
+                return ''
+
     # Com -> IF ( Rel ) Com ELSE com
     # int Com(char Com_c[MAX_COD], char lblbreak[]) { ... }
+
     def Com_break_if_while(self, com_c: str, label_break: str, label_continue: str):
         print('Entrei no Com')
         if (self.lexico.token in [Token.TK_break, Token.TK_continue]):
@@ -72,7 +139,6 @@ class Main:
             label_fim = gera_label()
             self.lexico.le_token()
 
-            # parte nova nova
             if self.lexico.token is Token.TK_Abre_Par:
                 self.lexico.le_token()
                 # if (Rel(Rel_c)) { ... }
@@ -118,7 +184,7 @@ class Main:
                         com1_c = self.Com_break_if_while(
                             '', label_fim, label_inicio)
                         if (com1_c is not None):
-                            return f"rotulo {label_inicio}\
+                            return f"\nrotulo {label_inicio}\
                                 {rel_c}\n\tgofalse {label_fim}\
                                 {com1_c}\n\tgoto {label_inicio}\nrotulo {label_fim}"
                         else:
@@ -131,6 +197,30 @@ class Main:
                 print(
                     f"[Erro: Com while] Esperava abre parênteses. Token: {self.lexico.token.name}")
             return None
+
+        elif (self.lexico.token == Token.TK_for):
+            label_inicio = gera_label()
+            label_fim = gera_label()
+            self.lexico.le_token()
+
+            if (self.lexico.token == Token.TK_Abre_Par):
+                self.lexico.le_token()
+                com_inicializacao = self.com_for_inicializacao()
+                com_condicao = self.com_for_condicao()
+                com_incremento = self.com_for_incremento()
+
+                condicao_ou_branco = '' if com_condicao is '' else f'\n{com_condicao}\n\tgofalse {label_fim}'
+
+                if (self.lexico.token == Token.TK_Fecha_Par):
+                    self.lexico.le_token()
+                com1_c = self.Com_break_if_while('',
+                                                    label_break=label_fim, label_continue=label_inicio)
+                com1_c = '\n  '.join(com1_c.split('\n'))
+                return f"{com_inicializacao}\nrotulo {label_inicio}{condicao_ou_branco}{com1_c}\n{com_incremento}\n\tgoto {label_inicio}\nrotulo {label_fim}"
+                # else:
+                #     print(
+                #         f"[Erro: Com for] esperava fecha parenteses. Token: {self.lexico.token}")
+
         elif self.lexico.token == Token.TK_id:
             id = self.lexico.lex
             self.lexico.le_token()
@@ -141,10 +231,7 @@ class Main:
                     [rel_p, rel_c] = resultado_rel
                     if self.lexico.token == Token.TK_pv:
                         self.lexico.le_token()
-                        # return f"\tvalor-l {id}\n{E_c}\t:=\n\tpop\n"
-                        # return f"\tvalor-l {id}\n{rel_c}\t:=\n\tpop\n"
                         return f"{rel_c}\n{id} = {rel_p}"
-                        
 
                     else:
                         print(
@@ -180,7 +267,6 @@ class Main:
         print('Entrei no Rel')
         try:
             [E1_p, E1_c] = self.E_expressao()
-        # if (E1_c is not None):
             op = ''
             if (self.lexico.token == Token.TK_Maior):
                 op = ">"
@@ -209,9 +295,8 @@ class Main:
         except:
             return None
 
-    # Fim parte nova
-
     # avalia atribuicao
+
     def A(self):
         try:
             [E_p, E_c] = self.E_expressao()
