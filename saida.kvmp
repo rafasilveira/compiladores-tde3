@@ -3,44 +3,49 @@ T000 = 0
 i = T000
 T001 = 0
 j = T001
-rotulo LB000
 
+rotulo LB000
 T002 = 10
 T003 = i < T002
 T004 = 10
 T005 = j < T004
-	gofalse LB001
+if !(T003 && T005) goto LB001
+
   T0010 = 1
   a = T0010
+  
   T0011 = 0
   T0012 = a > T0011
-  	gofalse LB002
-  	goto LB000
-  rotulo LB002
-  
+  if !(T0012) goto LB003
+  	goto LB002
+    
+  rotulo LB003
   T0013 = 1
   b = T0013
-  rotulo LB004                                
   T0014 = 10
   T0015 = a < T0014
-  	gofalse LB005                                
-  T0016 = 1
-  T0017 = a + T0016
-  a = T0017
+  rotulo LB004
+  if !(T0015) goto LB005
+    T0016 = 1
+    T0017 = a + T0016
+    a = T0017
   	goto LB004
   rotulo LB005
+  
   T0018 = 1
   T0019 = b > T0018
-  	gofalse LB006
+  if !(T0019) goto LB007
   	goto LB001
-  rotulo LB006
-  
+    
+  rotulo LB007
   T0020 = 1
   c = T0020
 
+rotulo LB002
 T006 = 1
 T007 = i + T006
 T008 = 1
 T009 = j - T008
 	goto LB000
+
 rotulo LB001
