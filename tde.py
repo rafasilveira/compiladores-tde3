@@ -12,10 +12,10 @@ class Main:
             self.lexico.le_token()
             resultado = []
 
-            comandos = self.lista_com(label_break='', label_continue='')
+            comandos = self.read_all()
             if comandos is not None:
                 with open('saida.kvmp', 'w') as arq_saida:
-                    print('Resultado:')
+                    print('\nResultado:')
                     for comando in comandos.split('\n'):
                         resultado.append(comando)
                         print(comando)
@@ -24,13 +24,71 @@ class Main:
             else:
                 print('Programa encerrado com erro.')
 
+    def read_all(self):
+        comandos = ""
+        while self.lexico.token != Token.TK_Fim_Arquivo:
+            resultado = self.read_function()
+            if resultado != "":
+                comandos += resultado
+            else:
+                return None
+
+        return comandos
+
+    def read_function(self):
+        comandos = ""
+        print('[function] Entrei no bloco de function')
+        if (self.lexico.token in [Token.TK_int, Token.TK_float, Token.TK_char]):
+            print("[function] Encontrei o return_type")
+            self.lexico.le_token()
+            if self.lexico.token == Token.TK_id:
+                print("[function] Encontrei a function_name")
+                self.lexico.le_token()
+                if self.lexico.token == Token.TK_Abre_Par:
+                    print("[function] Encontrei abre parenteses")
+                    self.lexico.le_token()
+                    while self.lexico.token != Token.TK_Fecha_Par:
+                        if self.lexico.token in [Token.TK_int, Token.TK_float, Token.TK_char]:
+                            self.lexico.le_token()
+                            if self.lexico.token == Token.TK_id:
+                                self.lexico.le_token()
+                                if self.lexico.token == Token.TK_virgula:
+                                    self.lexico.le_token()
+                                    continue
+                                else:
+                                    break
+                        else:
+                            print("[function] tipo de parâmetro não identificado")
+                            print(self.lexico.token)
+                            return ""
+                    if self.lexico.token == Token.TK_Fecha_Par:
+                        print("[function] Encontrei fecha parenteses")
+                        self.lexico.le_token()
+                        if self.lexico.token == Token.TK_Abre_Chaves:
+                            print("[function] Encontrei abre chaves")
+                            self.lexico.le_token()
+                            comandos += self.lista_com(label_break='', label_continue='')
+                            if self.lexico.token == Token.TK_Fecha_Chaves:
+                                print("[function] Encontrei fecha_chaves\n")
+                                self.lexico.le_token()
+                                return comandos
+                else:
+                    print("[function] Erro no reconhecimento de abre_parenteses")
+                    return ""
+            else:
+                print("[function] Erro de sintaxe em function_name")
+                return ""
+        else:
+            return ""
+
     # int Lista_Com(char Lista_Com_c[MAX_COD], char lblbreak[])
     def lista_com(self, label_break: str, label_continue: str):
         print('Entrei no lista_com')
         print(f'Vou testar Com - token: {self.lexico.token.name}')
         if (self.lexico.token == Token.TK_Fim_Arquivo):
             return ''
-        if (self.lexico.token not in [Token.TK_id, Token.TK_pv, Token.TK_if, Token.TK_while, Token.TK_break, Token.TK_continue, Token.TK_for]):
+        if (self.lexico.token not in [Token.TK_id, Token.TK_pv, Token.TK_if, Token.TK_while, Token.TK_break,
+                                      Token.TK_continue, Token.TK_for]):
             return ""
 
         # if (Com(Com_c, lblbreak)) { ... }
@@ -91,7 +149,7 @@ class Main:
                     return self.com_for_condicao(resultado, E2_p)
                 self.lexico.le_token()
                 r = [f"{temp_anterior} && {E2_p}" if temp_anterior !=
-                     '' else E2_p, resultado]
+                                                     '' else E2_p, resultado]
                 print(f'[for cond] saindo no !virgula: {r}')
                 return r
             except:
@@ -303,7 +361,8 @@ class Main:
             elif (self.lexico.token == Token.TK_Menor_Igual):
                 op = "<="
             print(f'Voltei do E, token: {self.lexico.token.name} op: {op}')
-            if (self.lexico.token in [Token.TK_Maior, Token.TK_Menor, Token.TK_Igual, Token.TK_Diferente, Token.TK_Maior_Igual, Token.TK_Menor_Igual]):
+            if (self.lexico.token in [Token.TK_Maior, Token.TK_Menor, Token.TK_Igual, Token.TK_Diferente,
+                                      Token.TK_Maior_Igual, Token.TK_Menor_Igual]):
                 self.lexico.le_token()
                 resultado_E2 = self.E_expressao()
                 if (resultado_E2 is not None):
