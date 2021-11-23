@@ -4,6 +4,7 @@ Token = Enum("TOKEN",
     "TK_int \
     TK_float \
     TK_char \
+    TK_void \
     TK_struct \
     TK_if \
     TK_else \
