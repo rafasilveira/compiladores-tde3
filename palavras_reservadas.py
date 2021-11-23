@@ -4,6 +4,7 @@ reservadas = {
     "int": Token.TK_int,
     "float": Token.TK_float,
     "char": Token.TK_char,
+    "void": Token.TK_void,
     "struct": Token.TK_struct,
     "if": Token.TK_if,
     "else": Token.TK_else,
