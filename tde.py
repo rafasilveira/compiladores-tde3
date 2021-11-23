@@ -38,7 +38,7 @@ class Main:
     def read_function(self):
         comandos = ""
         print('[function] Entrei no bloco de function')
-        if (self.lexico.token in [Token.TK_int, Token.TK_float, Token.TK_char]):
+        if (self.lexico.token in [Token.TK_int, Token.TK_float, Token.TK_char, Token.TK_void]):
             print("[function] Encontrei o return_type")
             self.lexico.le_token()
             if self.lexico.token == Token.TK_id:
@@ -517,7 +517,29 @@ class Main:
             self.lexico.le_token()
             return [F_p, F_c]
 
-        if (self.lexico.token in [Token.TK_id, Token.TK_pv, Token.TK_int, Token.TK_float]):
+        if (self.lexico.token in [Token.TK_id]):
+            print("variável")
+            F_p = self.lexico.lex
+            self.lexico.le_token()
+            if self.lexico.token == Token.TK_Abre_Par:
+                print("chamada de função")
+                self.lexico.le_token()
+                while self.lexico.token != Token.TK_Fecha_Par:
+                    if self.lexico.token == Token.TK_id:
+                        print("parâmetro na função")
+                        self.lexico.le_token()
+                        if self.lexico.token == Token.TK_virgula:
+                            self.lexico.le_token()
+                            continue
+                        else:
+                            break
+
+                self.lexico.le_token()
+                return [F_p, '']
+            else:
+                return [F_p, '']
+
+        if (self.lexico.token in [Token.TK_pv, Token.TK_int, Token.TK_float]):
             F_p = self.lexico.lex
             self.lexico.le_token()
             return [F_p, '']
