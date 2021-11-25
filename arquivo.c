@@ -1,25 +1,15 @@
-int calcular(int c, int d){
-    e = c + d;
+int calcular(int a, int b){
+    e = (a * 3) + b;
 }
 
 void print(int a){
-    s = a;
+    s = a + b;
 }
 
 int main(){
-    for (i = 0, j = 0; i < 10, j < 10; i = i + 1, j = j - 1) {
-      a = 1;
-      if (a > 0) continue;
-      b = 1;
-
-      while (a < 10) {
-        a = a + 1;
-      }
-      if (b > 1) break;
-      c = 1;
+    for (i = 0; i < 10; i = i + 1) {
+        z = calcular(i, 3);
     }
 
-    z = calcular(a, b);
-
-    //print(a);
+    print(z);
 }
