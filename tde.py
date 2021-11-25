@@ -15,7 +15,7 @@ class Main:
             comandos = self.read_all()
             if comandos is not None:
                 with open('saida.kvmp', 'w') as arq_saida:
-                    print('\nResultado:')
+                    print('\nResultado:\n')
                     for comando in comandos.split('\n'):
                         resultado.append(comando)
                         print(comando)
@@ -29,6 +29,7 @@ class Main:
         while self.lexico.token != Token.TK_Fim_Arquivo:
             resultado = self.read_function()
             if resultado != "":
+                resultado = 'rotulo ' + gera_label() + resultado + '\n\n'
                 comandos += resultado
             else:
                 return None
@@ -38,7 +39,7 @@ class Main:
     def read_function(self):
         comandos = ""
         print('[function] Entrei no bloco de function')
-        if (self.lexico.token in [Token.TK_int, Token.TK_float, Token.TK_char, Token.TK_void]):
+        if self.lexico.token in [Token.TK_int, Token.TK_float, Token.TK_char, Token.TK_void]:
             print("[function] Encontrei o return_type")
             self.lexico.le_token()
             if self.lexico.token == Token.TK_id:
@@ -304,6 +305,25 @@ class Main:
         elif self.lexico.token == Token.TK_id:
             id = self.lexico.lex
             self.lexico.le_token()
+            if self.lexico.token == Token.TK_Abre_Par:
+                print("chamada de função")
+                self.lexico.le_token()
+                while self.lexico.token != Token.TK_Fecha_Par:
+                    if self.lexico.token in [Token.TK_id, Token.TK_int, Token.TK_Const_Int]:
+                        print("parâmetro na função")
+                        self.lexico.le_token()
+                        if self.lexico.token == Token.TK_virgula:
+                            self.lexico.le_token()
+                            continue
+                        else:
+                            break
+
+                self.lexico.le_token()
+                if self.lexico.token == Token.TK_pv:
+                    print('Vou retornar no Com com ponto e virgula')
+                    self.lexico.le_token()
+                    return ''
+
             if self.lexico.token == Token.TK_Atrib:
                 self.lexico.le_token()
                 resultado_rel = self.Rel()
@@ -525,7 +545,7 @@ class Main:
                 print("chamada de função")
                 self.lexico.le_token()
                 while self.lexico.token != Token.TK_Fecha_Par:
-                    if self.lexico.token == Token.TK_id:
+                    if self.lexico.token in [Token.TK_id, Token.TK_int, Token.TK_Const_Int]:
                         print("parâmetro na função")
                         self.lexico.le_token()
                         if self.lexico.token == Token.TK_virgula:
