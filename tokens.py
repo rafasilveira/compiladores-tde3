@@ -33,6 +33,7 @@ Token = Enum("TOKEN",
     TK_for \
     TK_break \
     TK_continue \
+    TK_return \
     TK_and_bitwise \
     TK_and_logico \
     TK_Div \
