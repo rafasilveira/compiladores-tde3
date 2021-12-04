@@ -12,6 +12,7 @@ reservadas = {
     "for": Token.TK_for,
     "break": Token.TK_break,
     "continue": Token.TK_continue,
+    "return": Token.TK_return
 }
 
 
