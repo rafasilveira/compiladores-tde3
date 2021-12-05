@@ -199,6 +199,7 @@ class Main:
 
     def Com_break_if_while(self, com_c: str, label_break: str, label_continue: str):
         print('Entrei no Com')
+        label_return = None
         if self.lexico.token in [Token.TK_break, Token.TK_continue]:
             label = label_break if self.lexico.token is Token.TK_break else label_continue
             op = 'break' if self.lexico.token is Token.TK_break else 'continue'
@@ -211,13 +212,14 @@ class Main:
                 return None
         elif self.lexico.token == Token.TK_return:
             print("Encontrou um return")
+            label_return = gera_label()
             self.lexico.le_token()
             resultado_rel = self.Rel()
             if resultado_rel is not None:
                 [rel_p, rel_c] = resultado_rel
                 if self.lexico.token == Token.TK_pv:
                     self.lexico.le_token()
-                    return ""
+                    return "\ngoto " + label_return
         elif self.lexico.token == Token.TK_if:
             label_fim = gera_label()
             self.lexico.le_token()
