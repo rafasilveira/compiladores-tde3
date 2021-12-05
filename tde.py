@@ -346,6 +346,10 @@ class Main:
                             print(
                                 '[Erro: Com id] Faltou ponto e virgula apos atribuicao')
                     return None
+
+                if self.lexico.token == Token.TK_pv:
+                    self.lexico.le_token()
+                    return ""
         elif self.lexico.token == Token.TK_id:
             id = self.lexico.lex
             self.lexico.le_token()
