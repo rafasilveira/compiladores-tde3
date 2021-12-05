@@ -1,6 +1,6 @@
 int calcular(int a, int b){
     int e = (a * 3) + b;
-    return e;
+    return e + 1;
 }
 
 void print(int a){
