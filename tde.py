@@ -29,7 +29,7 @@ class Main:
         while self.lexico.token != Token.TK_Fim_Arquivo:
             resultado, function_name = self.read_function()
             if resultado != "":
-                resultado = function_name + ':' + resultado + '\n\n'
+                resultado = function_name + ':' + '\n'.join(["    " + r for r in resultado.split('\n')]) + '\n\n'
                 comandos += resultado
             else:
                 return None
