@@ -27,9 +27,9 @@ class Main:
     def read_all(self):
         comandos = ""
         while self.lexico.token != Token.TK_Fim_Arquivo:
-            resultado = self.read_function()
+            resultado, function_name = self.read_function()
             if resultado != "":
-                resultado = 'rotulo ' + gera_label() + resultado + '\n\n'
+                resultado = function_name + ':' + resultado + '\n\n'
                 comandos += resultado
             else:
                 return None
@@ -44,6 +44,7 @@ class Main:
             self.lexico.le_token()
             if self.lexico.token == Token.TK_id:
                 print("[function] Encontrei a function_name")
+                function_name = self.lexico.lex
                 self.lexico.le_token()
                 if self.lexico.token == Token.TK_Abre_Par:
                     print("[function] Encontrei abre parenteses")
@@ -72,7 +73,7 @@ class Main:
                             if self.lexico.token == Token.TK_Fecha_Chaves:
                                 print("[function] Encontrei fecha_chaves\n")
                                 self.lexico.le_token()
-                                return comandos
+                                return comandos, function_name
                 else:
                     print("[function] Erro no reconhecimento de abre_parenteses")
                     return ""
