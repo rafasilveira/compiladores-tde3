@@ -4,12 +4,13 @@ int calcular(int a, int b){
 }
 
 void print(int a){
-    int s = a + b;
+    int s;
+    s = a + b;
 }
 
 int main(){
     for (i = 0; i < 10; i = i + 1) {
-        int z = calcular(i, 3);
+        int z = calcular(3, i);
     }
 
     print(z);
