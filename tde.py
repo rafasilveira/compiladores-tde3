@@ -209,13 +209,12 @@ class Main:
         elif self.lexico.token == Token.TK_return:
             print("Encontrou um return")
             self.lexico.le_token()
-            if self.lexico.token in [Token.TK_id, Token.TK_Const_Int]:
-                print("Encontrei o que será retornado")
-                self.lexico.le_token()
+            resultado_rel = self.Rel()
+            if resultado_rel is not None:
+                [rel_p, rel_c] = resultado_rel
                 if self.lexico.token == Token.TK_pv:
-                    print('Vou retornar a função com ponto e virgula')
                     self.lexico.le_token()
-                    return ''
+                    return ""
         elif self.lexico.token == Token.TK_if:
             label_fim = gera_label()
             self.lexico.le_token()
