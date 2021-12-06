@@ -27,11 +27,8 @@ class Main:
     def read_all(self):
         comandos = ""
         while self.lexico.token != Token.TK_Fim_Arquivo:
-            resultado, function_name = self.read_function()
+            resultado = self.read_function()
             if resultado != "":
-                list_resultado = ["    " + r for r in resultado.split('\n')]
-                fim_funcao = "\n" + gera_label() + ":" + '\n' + "    leave\n" + "    ret" + '\n\n'
-                resultado = function_name + ':' + '\n'.join(list_resultado) + fim_funcao
                 comandos += resultado
             else:
                 return None
@@ -39,6 +36,7 @@ class Main:
         return comandos
 
     def read_function(self):
+        label_return = gera_label()
         comandos = ""
         print('[function] Entrei no bloco de function')
         if self.lexico.token in [Token.TK_int, Token.TK_float, Token.TK_char, Token.TK_void]:
@@ -71,11 +69,14 @@ class Main:
                         if self.lexico.token == Token.TK_Abre_Chaves:
                             print("[function] Encontrei abre chaves")
                             self.lexico.le_token()
-                            comandos += self.lista_com(label_break='', label_continue='')
+                            comandos += self.lista_com(label_break='',
+                                                       label_continue='', label_return=label_return)
                             if self.lexico.token == Token.TK_Fecha_Chaves:
                                 print("[function] Encontrei fecha_chaves\n")
                                 self.lexico.le_token()
-                                return comandos, function_name
+                                list_resultado = '\n'.join([f"    {r}" for r in comandos.split('\n')])
+                                fim_funcao = f"\n\n    rotulo {label_return} (return)\n    leave\n    ret\n\n"
+                                return f"{function_name}:{list_resultado}{fim_funcao}"
                 else:
                     print("[function] Erro no reconhecimento de abre_parenteses")
                     return ""
@@ -86,7 +87,7 @@ class Main:
             return ""
 
     # int Lista_Com(char Lista_Com_c[MAX_COD], char lblbreak[])
-    def lista_com(self, label_break: str, label_continue: str):
+    def lista_com(self, label_break: str = '', label_continue: str = '', label_return: str = ''):
         print('Entrei no lista_com')
         print(f'Vou testar Com - token: {self.lexico.token.name}')
         if self.lexico.token == Token.TK_Fim_Arquivo:
@@ -96,10 +97,10 @@ class Main:
             return ""
 
         # if (Com(Com_c, lblbreak)) { ... }
-        com_c = self.Com_break_if_while('', label_break, label_continue)
+        com_c = self.Com_break_if_while('', label_break, label_continue, label_return)
         if com_c is not None:
             print(f'B - token: {self.lexico.token.name}')
-            LL_c = self.lista_com(label_break, label_continue)
+            LL_c = self.lista_com(label_break, label_continue, label_return)
             if LL_c is not None:
                 print('Vou retornar no Lista_Com. Token: ',
                       self.lexico.token.name)
@@ -153,7 +154,7 @@ class Main:
                     return self.com_for_condicao(resultado, E2_p)
                 self.lexico.le_token()
                 r = [f"{temp_anterior} && {E2_p}" if temp_anterior !=
-                                                     '' else E2_p, resultado]
+                     '' else E2_p, resultado]
                 print(f'[for cond] saindo no !virgula: {r}')
                 return r
             except:
@@ -197,9 +198,8 @@ class Main:
     # Com -> IF ( Rel ) Com ELSE com
     # int Com(char Com_c[MAX_COD], char lblbreak[]) { ... }
 
-    def Com_break_if_while(self, com_c: str, label_break: str, label_continue: str):
+    def Com_break_if_while(self, com_c: str, label_break: str = '', label_continue: str = '', label_return: str = ''):
         print('Entrei no Com')
-        label_return = None
         if self.lexico.token in [Token.TK_break, Token.TK_continue]:
             label = label_break if self.lexico.token is Token.TK_break else label_continue
             op = 'break' if self.lexico.token is Token.TK_break else 'continue'
@@ -212,7 +212,6 @@ class Main:
                 return None
         elif self.lexico.token == Token.TK_return:
             print("Encontrou um return")
-            label_return = gera_label()
             self.lexico.le_token()
             resultado_rel = self.Rel()
             if resultado_rel is not None:
@@ -234,6 +233,7 @@ class Main:
                         self.lexico.le_token()
                         com3_c = self.Com_break_if_while(
                             '', label_break, label_continue)
+                        print("eu to aqui")
                         if com3_c is not None:
                             com3_c = '\n  '.join(com3_c.split('\n'))
                             if self.lexico.token == Token.TK_else:
@@ -243,12 +243,12 @@ class Main:
                                     '', label_break, label_continue)
                                 if com2_c is not None:
                                     # com2_c = '\n  '.join(com2_c.split('\n'))
-                                    return f"{rel_c}\nif !({rel_p}) goto {label_else}{com3_c}\n\nrotulo {label_else}{com2_c}\n\nrotulo {label_fim}\n"
+                                    return f"{rel_c}\nif !({rel_p}) goto {label_else}{com3_c}\n\nrotulo {label_else} (else){com2_c}\n\nrotulo {label_fim} (fim if)\n"
                                 else:
                                     print(
                                         "[Erro: Com if] Erro no comando do Else")
                             else:
-                                return f"\n{rel_c}\nif !({rel_p}) goto {label_fim}\n{com3_c}\nrotulo {label_fim}"
+                                return f"\n{rel_c}\nif !({rel_p}) goto {label_fim}\n{com3_c}\nrotulo {label_fim} (fim if)"
                     else:
                         print(
                             f"[Erro: Com if] Esperava fecha parênteses. Token: {self.lexico.token.name}")
@@ -272,9 +272,10 @@ class Main:
                         self.lexico.le_token()
                         bloco_comandos = self.Com_break_if_while(
                             '', label_break=label_fim, label_continue=label_cont)
-                        bloco_comandos = '\n  '.join(bloco_comandos.split('\n'))
+                        bloco_comandos = '\n  '.join(
+                            bloco_comandos.split('\n'))
                         if bloco_comandos is not None:
-                            return f"{rel_c}\nrotulo {label_inicio}\nif !({rel_p}) goto {label_fim}{bloco_comandos}\n\tgoto {label_inicio}\nrotulo {label_fim}"
+                            return f"{rel_c}\nrotulo {label_inicio} (inicio if)\nif !({rel_p}) goto {label_fim}{bloco_comandos}\n\tgoto {label_inicio}\nrotulo {label_fim} (fim if)"
 
                         else:
                             print('[Erro - Com while] esperava fecha parênteses')
@@ -394,7 +395,7 @@ class Main:
             lista_com_c = ""
             self.lexico.le_token()
             print("Consumi o abre chaves")
-            lista_com_c = self.lista_com(label_break, label_continue)
+            lista_com_c = self.lista_com(label_break, label_continue, label_return)
             if lista_com_c is not None:
                 print(f'Voltei do Lista_Com. Token: {self.lexico.token}')
                 if self.lexico.token == Token.TK_Fecha_Chaves:
