@@ -325,7 +325,7 @@ class Main:
                     print("chamada de função")
                     self.lexico.le_token()
                     while self.lexico.token != Token.TK_Fecha_Par:
-                        if self.lexico.token in [Token.TK_id, Token.TK_int, Token.TK_Const_Int]:
+                        if self.lexico.token in [Token.TK_id, Token.TK_Const_Int]:
                             print("parâmetro na função")
                             self.lexico.le_token()
                             if self.lexico.token == Token.TK_virgula:
@@ -364,7 +364,7 @@ class Main:
                 print("chamada de função")
                 self.lexico.le_token()
                 while self.lexico.token != Token.TK_Fecha_Par:
-                    if self.lexico.token in [Token.TK_id, Token.TK_int, Token.TK_Const_Int]:
+                    if self.lexico.token in [Token.TK_id, Token.TK_Const_Int]:
                         print("parâmetro na função")
                         self.lexico.le_token()
                         if self.lexico.token == Token.TK_virgula:
@@ -600,7 +600,7 @@ class Main:
                 print("chamada de função")
                 self.lexico.le_token()
                 while self.lexico.token != Token.TK_Fecha_Par:
-                    if self.lexico.token in [Token.TK_id, Token.TK_int, Token.TK_Const_Int]:
+                    if self.lexico.token in [Token.TK_id, Token.TK_Const_Int]:
                         print("parâmetro na função")
                         self.lexico.le_token()
                         if self.lexico.token == Token.TK_virgula:
