@@ -198,6 +198,26 @@ class Main:
 
     # Com -> IF ( Rel ) Com ELSE com
     # int Com(char Com_c[MAX_COD], char lblbreak[]) { ... }
+    
+    def processa_funcao(self, nome):
+        print("chamada de função")
+        self.lexico.le_token()
+        while self.lexico.token != Token.TK_Fecha_Par:
+            if self.lexico.token in [Token.TK_id, Token.TK_Const_Int]:
+                print("parâmetro na função")
+                self.lexico.le_token()
+                if self.lexico.token == Token.TK_virgula:
+                    self.lexico.le_token()
+                    continue
+                else:
+                    break
+
+        self.lexico.le_token()
+        if self.lexico.token == Token.TK_pv:
+            print('Vou retornar no Com com ponto e virgula')
+            self.lexico.le_token()
+            return f"call {nome}\n"
+            
 
     def Com_break_if_while(self, com_c: str, label_break: str = '', label_continue: str = '', label_return: str = ''):
         print('Entrei no Com')
@@ -322,23 +342,10 @@ class Main:
                 id = self.lexico.lex
                 self.lexico.le_token()
                 if self.lexico.token == Token.TK_Abre_Par:
-                    print("chamada de função")
-                    self.lexico.le_token()
-                    while self.lexico.token != Token.TK_Fecha_Par:
-                        if self.lexico.token in [Token.TK_id, Token.TK_Const_Int]:
-                            print("parâmetro na função")
-                            self.lexico.le_token()
-                            if self.lexico.token == Token.TK_virgula:
-                                self.lexico.le_token()
-                                continue
-                            else:
-                                break
-
-                    self.lexico.le_token()
-                    if self.lexico.token == Token.TK_pv:
-                        print('Vou retornar no Com com ponto e virgula')
-                        self.lexico.le_token()
-                        return ''
+                    print('chamando funcao na 346')
+                    func = self.processa_funcao(id)
+                    if func is not None:
+                        return func
 
                 if self.lexico.token == Token.TK_Atrib:
                     self.lexico.le_token()
@@ -361,23 +368,10 @@ class Main:
             id = self.lexico.lex
             self.lexico.le_token()
             if self.lexico.token == Token.TK_Abre_Par:
-                print("chamada de função")
-                self.lexico.le_token()
-                while self.lexico.token != Token.TK_Fecha_Par:
-                    if self.lexico.token in [Token.TK_id, Token.TK_Const_Int]:
-                        print("parâmetro na função")
-                        self.lexico.le_token()
-                        if self.lexico.token == Token.TK_virgula:
-                            self.lexico.le_token()
-                            continue
-                        else:
-                            break
-
-                self.lexico.le_token()
-                if self.lexico.token == Token.TK_pv:
-                    print('Vou retornar no Com com ponto e virgula')
-                    self.lexico.le_token()
-                    return ''
+                print('chamando funcao na 371')
+                func = self.processa_funcao(id)
+                if func is not None:
+                    return func
 
             if self.lexico.token == Token.TK_Atrib:
                 self.lexico.le_token()
@@ -597,19 +591,13 @@ class Main:
             F_p = self.lexico.lex
             self.lexico.le_token()
             if self.lexico.token == Token.TK_Abre_Par:
-                print("chamada de função")
+                print("chamando funcao na 595")
+                func = self.processa_funcao(F_p)
                 self.lexico.le_token()
-                while self.lexico.token != Token.TK_Fecha_Par:
-                    if self.lexico.token in [Token.TK_id, Token.TK_Const_Int]:
-                        print("parâmetro na função")
-                        self.lexico.le_token()
-                        if self.lexico.token == Token.TK_virgula:
-                            self.lexico.le_token()
-                            continue
-                        else:
-                            break
 
-                self.lexico.le_token()
+                if func is not None:
+                    return [func, '']
+
                 return [F_p, '']
             else:
                 return [F_p, '']

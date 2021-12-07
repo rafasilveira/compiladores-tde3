@@ -1,41 +1,23 @@
-calcular:    
-    T000 = 3
-    T001 = a * T000
-    T002 = T001 + b
-    e = T002
-    goto LB000
+print:
+    push BP
+    BP = SP
+    SP = SP - 16
+    
+    T000 = 0
+    s = T000
 
-    rotulo LB000 (return)
+    rotulo LB000
     leave
     ret
 
-print:    
-    T005 = a + b
-    s = T005
+main:
+    push BP
+    BP = SP
+    SP = SP - 16
+    call print
+    
 
-    rotulo LB001 (return)
-    leave
-    ret
-
-main:    
-    T006 = 0
-    i = T006
-    
-    rotulo LB003
-    T007 = 10
-    T008 = i < T007
-    if !(T008) goto LB004
-    
-      z = calcular
-    
-    rotulo LB005
-    T009 = 1
-    T0010 = i + T009
-    	goto LB003
-    
-    rotulo LB004
-
-    rotulo LB002 (return)
+    rotulo LB001
     leave
     ret
 
