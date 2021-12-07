@@ -75,8 +75,9 @@ class Main:
                                 print("[function] Encontrei fecha_chaves\n")
                                 self.lexico.le_token()
                                 list_resultado = '\n'.join([f"    {r}" for r in comandos.split('\n')])
-                                fim_funcao = f"\n\n    rotulo {label_return} (return)\n    leave\n    ret\n\n"
-                                return f"{function_name}:{list_resultado}{fim_funcao}"
+                                inicio_funcao = "\n    push BP\n    BP = SP\n    SP = SP - 16\n"
+                                fim_funcao = f"\n\n    rotulo {label_return}\n    leave\n    ret\n\n"
+                                return f"{function_name}:{inicio_funcao}{list_resultado}{fim_funcao}"
                 else:
                     print("[function] Erro no reconhecimento de abre_parenteses")
                     return ""
