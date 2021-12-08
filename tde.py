@@ -198,26 +198,6 @@ class Main:
 
     # Com -> IF ( Rel ) Com ELSE com
     # int Com(char Com_c[MAX_COD], char lblbreak[]) { ... }
-    
-    def processa_funcao(self, nome):
-        print("chamada de função")
-        self.lexico.le_token()
-        while self.lexico.token != Token.TK_Fecha_Par:
-            if self.lexico.token in [Token.TK_id, Token.TK_Const_Int]:
-                print("parâmetro na função")
-                self.lexico.le_token()
-                if self.lexico.token == Token.TK_virgula:
-                    self.lexico.le_token()
-                    continue
-                else:
-                    break
-
-        self.lexico.le_token()
-        if self.lexico.token == Token.TK_pv:
-            print('Vou retornar no Com com ponto e virgula')
-            self.lexico.le_token()
-            return f"call {nome}\n"
-            
 
     def Com_break_if_while(self, com_c: str, label_break: str = '', label_continue: str = '', label_return: str = ''):
         print('Entrei no Com')
@@ -341,12 +321,6 @@ class Main:
             if self.lexico.token == Token.TK_id:
                 id = self.lexico.lex
                 self.lexico.le_token()
-                if self.lexico.token == Token.TK_Abre_Par:
-                    print('chamando funcao na 346')
-                    func = self.processa_funcao(id)
-                    if func is not None:
-                        return func
-
                 if self.lexico.token == Token.TK_Atrib:
                     self.lexico.le_token()
                     resultado_rel = self.Rel()
@@ -367,11 +341,14 @@ class Main:
         elif self.lexico.token == Token.TK_id:
             id = self.lexico.lex
             self.lexico.le_token()
+
             if self.lexico.token == Token.TK_Abre_Par:
-                print('chamando funcao na 371')
-                func = self.processa_funcao(id)
-                if func is not None:
-                    return func
+                print("função void")
+                self.ler_parametros_funcao()
+
+                if self.lexico.token == Token.TK_pv:
+                    self.lexico.le_token()
+                    return ""
 
             if self.lexico.token == Token.TK_Atrib:
                 self.lexico.le_token()
@@ -465,7 +442,6 @@ class Main:
     # avalia expressao
     def E_expressao(self):
         try:
-
             [T_p, T_c] = self.T()
             [R_sp, R_sc] = self.R_mais_menos(T_p, T_c)
             [L_sp, L_sc] = self.L_relacionais(R_sp, R_sc)
@@ -578,6 +554,27 @@ class Main:
         else:
             return [S_hp, S_hc]
 
+    def ler_parametros_funcao(self):
+        print("chamada de função")
+        self.lexico.le_token()
+        while self.lexico.token != Token.TK_Fecha_Par:
+            try:
+                self.lexico.le_token()
+                prt = self.Rel()
+                if prt is not None:
+                    if self.lexico.token == Token.TK_virgula:
+                        print("Pula para o próximo parâmetro")
+                        self.lexico.le_token()
+                        continue
+                    else:
+                        break
+            except:
+                print("Problema na leitura de parâmetros da função")
+                return None
+
+        self.lexico.le_token()
+        print("Leitura de parâmetros finalizada", "<-----------------------------------")
+
     # cte int, id, parenteses
     def F_cte_id_parenteses(self):
         if self.lexico.token == Token.TK_Const_Int:
@@ -591,16 +588,10 @@ class Main:
             F_p = self.lexico.lex
             self.lexico.le_token()
             if self.lexico.token == Token.TK_Abre_Par:
-                print("chamando funcao na 595")
-                func = self.processa_funcao(F_p)
-                self.lexico.le_token()
+                print("função")
+                self.ler_parametros_funcao()
 
-                if func is not None:
-                    return [func, '']
-
-                return [F_p, '']
-            else:
-                return [F_p, '']
+            return [F_p, '']
 
         if self.lexico.token in [Token.TK_pv, Token.TK_int, Token.TK_float]:
             F_p = self.lexico.lex
@@ -627,3 +618,4 @@ class Main:
 
 if __name__ == "__main__":
     Main()
+
